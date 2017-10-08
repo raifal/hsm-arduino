@@ -3,7 +3,6 @@ HSM - Heating System Monitoring
 
 for Arduino Uno with DS18B20 temperature sensors
 - Version 1.5
-- Author: Rainer Faller (www.rainer-faller.de)
 - Created: 17/MAY/2014
 
 Features:
