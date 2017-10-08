@@ -5,6 +5,13 @@ for Arduino Uno with DS18B20 temperature sensors
 - Version 1.5
 - Created: 17/MAY/2014
 
+Arduino IDE Setup:
+- Download
+
+Install the Libraries in Arduino IDE:
+- TemperatureControl (Downloaded from https://github.com/PaulStoffregen/OneWire/releases -> 2.3.3 -> zipfile)
+- OneWire (Downloaded form https://github.com/milesburton/Arduino-Temperature-Control-Library/releases -> 3.7.6 -> zipfile)
+
 Features:
 - Supports Two 1-Wire Buses for temperature measurement
 - Supports water leak level alarm
