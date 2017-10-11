@@ -30,7 +30,7 @@ Several components are included in order to realize this project. We start with 
 ## Architecture
 <img src="http://www.rainer-faller.de/arduino_pics/mp.png" width="600">
 
-The internet server contains a database with temperature values. The temperature values are sent by the monitor installed at home. The outside temperature is collected by a weather station. A website exists that an be viewed with the laptop, just as you do right now. A arduino is responsible for collecting the temperature values at home. 
+The internet server contains a database with temperature values. The temperature values are sent by the monitor installed at home. The outside temperature is collected by a weather station. A arduino is responsible for collecting the temperature values at home. 
 
 ## Arduino Parts
 A number of parts are required in order to setup the arduino. Please find below a list of components with a link of a possible shop. 
@@ -129,7 +129,7 @@ As the arduino uno does not have a possibility to connect to the internet, an et
 
 <img src="http://www.rainer-faller.de/arduino_pics/arduino_frizzing_v1_3.png" width="600"> 
 
-The temperature sensors are connected using the 1-Wire bus protocol. There are actually two busses installed. The reason is that some temperature sensors required a long cable (up to 10 meters). It seems like the power of the arduino is limited and only a sum of temperature sensors cable length of about 25 meters is possible to be connected to the bus. Therefore the board supports to busses in order to handle longer cable length. 
+The temperature sensors are connected using the 1-Wire bus protocol. There are actually two busses installed. The reason is that some temperature sensors required a long cable (up to 10 meters). It seems like the power of the arduino is limited and only a sum of temperature sensors cable length of about 25 meters is possible to be connected to the bus. Therefore the board supports two busses in order to handle longer cable length. 
 The board contains a push button. This push button can be used to send the data immediatly to the internet. A red led indicates that the button push was recognized. 
 The green led changes its state with every loop done. One loop is delayed by one second, so the led changes about every second.
 The yellow led behaves the same way as the green leed, but changes its state when data is sent to the internet server.
