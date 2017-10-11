@@ -1,5 +1,4 @@
-HSM - Heating System Monitoring
--------------------------------
+# HSM - Heating System Monitoring
 
 for Arduino Uno with DS18B20 temperature sensors
 - Version 1.5
@@ -25,12 +24,15 @@ Update V 1.5:
 - Includes a second water leak detection 
 
 
-Technical Solution
+# Technical Solution
 Several components are included in order to realize this project. We start with an overview of the architecture and continue to focus on the arduino board. 
-Architecture
+
+## Architecture
+![](http://www.rainer-faller.de/arduino_pics/mp.png | width=600 )
 
 The internet server contains a database with temperature values. The temperature values are sent by the monitor installed at home. The outside temperature is collected by a weather station. A website exists that an be viewed with the laptop, just as you do right now. A arduino is responsible for collecting the temperature values at home. 
-Arduino Parts
+
+## Arduino Parts
 A number of parts are required in order to setup the arduino. Please find below a list of components with a link of a possible shop. 
 
 <table>
@@ -118,20 +120,32 @@ A number of parts are required in order to setup the arduino. Please find below 
 	</tr>		
 </table>
 
-
-
-| Quantity | Product| Possible Shop URL | Price | 
-| ------ | ---- | ---- | ---- | ---- | 
-| 1| Arduino UNO Rev3| Arduino.cc| EUR 23,80 | 
-| 1| Arduino Ethernet Shield Rev3 WITHOUT PoE Module| Arduino.cc| EUR 34,51|
  
-![](http://www.rainer-faller.de/arduino_pics/mp.png)
 
-Arduino Board Setup
-As the arduino uno does not have a possibility to connect to the internet, an ethernet shield is required. The ethernet shield is not shown in the next diagram. 
+ 
+
+# Arduino Board Setup
+As the arduino uno does not have a possibility to connect to the internet, an ethernet shield is required. The ethernet shield is not shown in the next diagram.
+
+![](http://www.rainer-faller.de/arduino_pics/arduino_frizzing_v1_3.png  )
 
 The temperature sensors are connected using the 1-Wire bus protocol. There are actually two busses installed. The reason is that some temperature sensors required a long cable (up to 10 meters). It seems like the power of the arduino is limited and only a sum of temperature sensors cable length of about 25 meters is possible to be connected to the bus. Therefore the board supports to busses in order to handle longer cable length. 
 The board contains a push button. This push button can be used to send the data immediatly to the internet. A red led indicates that the button push was recognized. 
 The green led changes its state with every loop done. One loop is delayed by one second, so the led changes about every second.
 The yellow led behaves the same way as the green leed, but changes its state when data is sent to the internet server.
-Arduino Sketch
+
+# Pictures
+
+
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_3.jpg" data-caption="Arduino with connected sensors 1">           
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_1.jpg" data-caption="Arduino with connected sensors 2">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_2.jpg" data-caption="Arduino with connected sensors 3">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_4.jpg" data-caption="Arduino with connected sensors 4">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_5.jpg" data-caption="Arduino with connected sensors 5">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_6.jpg" data-caption="Arduino & Ethernet Shield">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_sensor.jpg" data-caption="Sensor DS18B20">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_transferstation2.jpg" data-caption="Transferstation with sensors 1">
+ <img src="http://www.rainer-faller.de/arduino_pics/transferstation_zoom.jpg" data-caption="Transferstation with sensors 2">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_solar.jpg" data-caption="Solarstation with sensors">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_8.jpg" data-caption="Arduino in the Box 1">   
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_7.jpg" data-caption="Arduino in the Box 2">   
