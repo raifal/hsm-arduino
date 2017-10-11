@@ -137,15 +137,15 @@ The yellow led behaves the same way as the green leed, but changes its state whe
 # Pictures
 
 
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_3.jpg" data-caption="Arduino with connected sensors 1">           
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_1.jpg" data-caption="Arduino with connected sensors 2">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_2.jpg" data-caption="Arduino with connected sensors 3">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_4.jpg" data-caption="Arduino with connected sensors 4">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_5.jpg" data-caption="Arduino with connected sensors 5">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_6.jpg" data-caption="Arduino & Ethernet Shield">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_sensor.jpg" data-caption="Sensor DS18B20">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_transferstation2.jpg" data-caption="Transferstation with sensors 1">
- <img src="http://www.rainer-faller.de/arduino_pics/transferstation_zoom.jpg" data-caption="Transferstation with sensors 2">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_solar.jpg" data-caption="Solarstation with sensors">
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_8.jpg" data-caption="Arduino in the Box 1">   
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_7.jpg" data-caption="Arduino in the Box 2">   
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_3.jpg" width="300" alt="Arduino with connected sensors 1">           
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_1.jpg" width="300" alt="Arduino with connected sensors 2">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_2.jpg" width="300" alt="Arduino with connected sensors 3">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_4.jpg" width="300" alt="Arduino with connected sensors 4">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_5.jpg" width="300" alt="Arduino with connected sensors 5">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_6.jpg" width="300" alt="Arduino & Ethernet Shield">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_sensor.jpg" width="300" alt="Sensor DS18B20">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_transferstation2.jpg" width="300" alt="Transferstation with sensors 1">
+ <img src="http://www.rainer-faller.de/arduino_pics/transferstation_zoom.jpg" width="300" alt="Transferstation with sensors 2">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_solar.jpg" width="300" alt="Solarstation with sensors">
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_8.jpg" width="300" alt="Arduino in the Box 1">   
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_7.jpg" width="300" alt="Arduino in the Box 2">   
