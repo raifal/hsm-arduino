@@ -28,7 +28,7 @@ Update V 1.5:
 Several components are included in order to realize this project. We start with an overview of the architecture and continue to focus on the arduino board. 
 
 ## Architecture
-![](http://www.rainer-faller.de/arduino_pics/mp.png | width=600 )
+<img src="http://www.rainer-faller.de/arduino_pics/mp.png" width="600">
 
 The internet server contains a database with temperature values. The temperature values are sent by the monitor installed at home. The outside temperature is collected by a weather station. A website exists that an be viewed with the laptop, just as you do right now. A arduino is responsible for collecting the temperature values at home. 
 
@@ -127,7 +127,7 @@ A number of parts are required in order to setup the arduino. Please find below 
 # Arduino Board Setup
 As the arduino uno does not have a possibility to connect to the internet, an ethernet shield is required. The ethernet shield is not shown in the next diagram.
 
-![](http://www.rainer-faller.de/arduino_pics/arduino_frizzing_v1_3.png  )
+<img src="http://www.rainer-faller.de/arduino_pics/arduino_frizzing_v1_3.png" width="600"> 
 
 The temperature sensors are connected using the 1-Wire bus protocol. There are actually two busses installed. The reason is that some temperature sensors required a long cable (up to 10 meters). It seems like the power of the arduino is limited and only a sum of temperature sensors cable length of about 25 meters is possible to be connected to the bus. Therefore the board supports to busses in order to handle longer cable length. 
 The board contains a push button. This push button can be used to send the data immediatly to the internet. A red led indicates that the button push was recognized. 
@@ -137,7 +137,7 @@ The yellow led behaves the same way as the green leed, but changes its state whe
 # Pictures
 
 
- <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_3.jpg" width="300" alt="Arduino with connected sensors 1">           
+ <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_3.jpg" width="300" alt="Arduino with connected sensors 1">          
  <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_1.jpg" width="300" alt="Arduino with connected sensors 2">
  <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_2.jpg" width="300" alt="Arduino with connected sensors 3">
  <img src="http://www.rainer-faller.de/arduino_pics/pic_arduino_4.jpg" width="300" alt="Arduino with connected sensors 4">
