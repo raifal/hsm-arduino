@@ -33,19 +33,17 @@ const char CREATED[12] = "17/MAY/2014";
 // ************************
 // Individual Parameters
 // ************************
-//const char      CLIENT_CODE[] = "j$d%367"; 
-//      byte      MAC_OF_ARDUINO_BOARD[] = { 0x90, 0xA2, 0xD2, 0x0E, 0xC8, 0x41 }; 
-//const IPAddress ARDUINO_CLIENT_IP (192,168,0,170);
-
 const char      CLIENT_CODE[] = "r$f%667"; 
       byte      MAC_OF_ARDUINO_BOARD[] = { 0x90, 0xA2, 0xDA, 0x0E, 0xC8, 0x42 }; 
 const IPAddress ARDUINO_CLIENT_IP (192,168,0,177);
 
-const char      TARGET_SERVER[] = "www.rainer-faller.de";
-const byte      TARGET_PORT = 80;
+const char      TARGET_SERVER[] = "85.93.26.146";
+const int       TARGET_PORT = 7071;
+const char      TARGET_ENDPOINT[] = "/";
 
 // TODO add base64 encoded string from Keepass "HZS php (called by Arduino)"
-const char      BASE64_AUTH_STRING[] = "<base64 encoded string>";
+// generate with: bash: echo -n "$username:$password" | base64
+const char      BASE64_AUTH_STRING[] = "aHNtOmFiJTV0MTNh";
 
 // ************************
 // Board Setup (Pin#)
@@ -437,7 +435,7 @@ void sendToServer()
     
     // send the HTTP GET request:
     client.print("GET ");
-    client.print("/HSM/mpi/mpi.php");
+    client.print(TARGET_ENDPOINT);
     client.println(" HTTP/1.1");
     client.print("Host: ");
     client.println(TARGET_SERVER);
