@@ -37,13 +37,13 @@ const char      CLIENT_CODE[] = "r$f%667";
       byte      MAC_OF_ARDUINO_BOARD[] = { 0x90, 0xA2, 0xDA, 0x0E, 0xC8, 0x42 }; 
 const IPAddress ARDUINO_CLIENT_IP (192,168,0,177);
 
-const char      TARGET_SERVER[] = "85.93.26.146";
-const int       TARGET_PORT = 7071;
+const char      TARGET_SERVER[] = "server";
+const int       TARGET_PORT = <port>;
 const char      TARGET_ENDPOINT[] = "/";
 
 // TODO add base64 encoded string from Keepass "HZS php (called by Arduino)"
 // generate with: bash: echo -n "$username:$password" | base64
-const char      BASE64_AUTH_STRING[] = "aHNtOmFiJTV0MTNh";
+const char      BASE64_AUTH_STRING[] = "<base64 encoded string>";
 
 // ************************
 // Board Setup (Pin#)
