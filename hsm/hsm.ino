@@ -43,7 +43,7 @@ const char      TARGET_ENDPOINT[] = "/api/measurements/batch";
 
 // TODO add base64 encoded string from Keepass "HZS php (called by Arduino)"
 // generate with: bash: echo -n "$username:$password" | base64
-const char      BASE64_AUTH_STRING[] = "aHNtOnNlQ3JldGk0aHNtX2FwaQ==";
+const char      BASE64_AUTH_STRING[] = "<HERE>";
 
 // ************************
 // Board Setup (Pin#)
@@ -51,12 +51,7 @@ const char      BASE64_AUTH_STRING[] = "aHNtOnNlQ3JldGk0aHNtX2FwaQ==";
    
 #define ONE_WIRE_BUS_1   2
 #define ONE_WIRE_BUS_2   3
-// #define PIN_LOWER_WATER_LEAK   A0
-// #define PIN_UPPER_WATER_LEAK   A1
 #define PIN_LED_LOOP_TOGGLE             5
-// #define PIN_LED_SWITCH_SEND_IMMEDIATLY  6
-// #define PIN_SWITCH_SEND_IMMEDIATLY      7
-// #define PIN_LED_COLLECTION_BLOCK_TOGGLE 8
 
 // sum of both 1-WireBuses
 #define MAX_SENSORS      12 
@@ -75,8 +70,7 @@ typedef struct
 const int       ONE_SECOND = 1000;
 const byte      NO_SENSOR_CONNECTED[8] = {0,0,0,0,0,0,0,0};
 // how often to measure and send the temperature data  // recommend: 120
-const int       NUMBER_OF_LOOPS_UNTIL_NEXT_MEASUREMENT = 5; 
-//const int       CRITICAL_WATER_LEAK_VALUE = 800;
+const int       NUMBER_OF_LOOPS_UNTIL_NEXT_MEASUREMENT = 120; 
 
 
 // ************************
@@ -109,9 +103,6 @@ void setup()
   Serial.begin(9600);
   printInfoHeader();
   
-  //pinMode(PIN_SWITCH_SEND_IMMEDIATLY,INPUT);
-  //pinMode(PIN_LED_COLLECTION_BLOCK_TOGGLE,OUTPUT);
-  //pinMode(PIN_LED_SWITCH_SEND_IMMEDIATLY, OUTPUT);
   pinMode(PIN_LED_LOOP_TOGGLE, OUTPUT);
   
   delay(2*ONE_SECOND);
@@ -319,27 +310,48 @@ void measureTemperature()
 
 void sendToServer()
 {
+ if (client.connect(TARGET_SERVER, TARGET_PORT)) 
+ {
+  client.print("POST ");
+  client.print(TARGET_ENDPOINT);
+  client.print(" HTTP/1.1\r\n");
+  client.print("Host: ");
+  client.print(TARGET_SERVER);
+  client.print("\r\n");
+  client.print("Authorization: Basic ");
+  client.print(BASE64_AUTH_STRING);
+  client.print("\r\n");
+  client.print("Content-Type: application/json\r\n");   
+  client.print("Content-Length: ");
+  if ( number_of_connected_sensors == 0 )
+  {
+    client.print(17+2);
+  }
+  else if ( number_of_connected_sensors == 1)
+  {
+    client.print(17+79+2);
+  }
+  else
+  {
+    client.print(17+79+ ((number_of_connected_sensors-1)*80) +2);
+  }
+  client.print("\r\n");
   
-  Serial.println();
-  Serial.println("Debug is on, not sending to server");
-
-  Serial.print("{ \"measurements\": [ ");
-  Serial.println();
+  client.print("\r\n");
+  client.print("{\"measurements\":[");
   
   for ( int s = 0; s<number_of_connected_sensors; s++)
   {
-    if ( s != 0 ) { Serial.print(","); }
-    Serial.print("{ \"sensorAddress\": \"");
-    Serial.print(sensorAddressToString(tempAddr, connected_sensor_ids[s].address));
-    Serial.print("\", \"temperature\": ");
-    Serial.print(measurement_values[s]);
-    Serial.print(", \"timestamp\": \"");
-    Serial.print("2026-03-08T18:32:07.159Z");
-    Serial.print("\" }");
-    Serial.println();
+    if ( s != 0 ) { client.print(","); }
+    client.print("{\"sensorAddress\":\"");
+    client.print(sensorAddressToString(tempAddr, connected_sensor_ids[s].address));
+    client.print("\",\"temperature\":");
+    client.print(measurement_values[s]);
+    client.print("}");
   }
-  Serial.print("] }");   
-  Serial.println();
+  client.println("]}");   
+  Serial.println("sent done");
+ }
 }
 
 void printInfoHeader()
