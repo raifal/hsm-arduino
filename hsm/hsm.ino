@@ -95,11 +95,68 @@ char           tempAddr[40];
 EthernetClient client;
 // state of the connection last time through the main loop
 boolean        lastConnected = false;
+int            last_http_status = -1;
+unsigned int   consecutive_send_failures = 0;
+unsigned long  successful_send_count = 0;
+unsigned long  failed_send_count = 0;
+byte           last_reset_cause = 0;
 
 
 char toHexChar(byte v)
 {
   return (v < 10) ? ('0' + v) : ('A' + (v - 10));
+}
+
+int signedLongLength(long value)
+{
+  char buf[16];
+  ltoa(value, buf, 10);
+  return strlen(buf);
+}
+
+int unsignedLongLength(unsigned long value)
+{
+  char buf[16];
+  ultoa(value, buf, 10);
+  return strlen(buf);
+}
+
+int healthTelemetryLength()
+{
+  int len = strlen("],\"health\":{") + 2; // suffix + closing }}
+
+  len += strlen("\"uptimeSec\":") + unsignedLongLength(millis() / 1000UL);
+  len += 1 + strlen("\"freeRam\":") + signedLongLength(freeMemory());
+  len += 1 + strlen("\"loopCounter\":") + signedLongLength(loop_counter_until_next_measurement);
+  len += 1 + strlen("\"httpStatus\":") + signedLongLength(last_http_status);
+  len += 1 + strlen("\"sendFailures\":") + signedLongLength(consecutive_send_failures);
+  len += 1 + strlen("\"okCount\":") + unsignedLongLength(successful_send_count);
+  len += 1 + strlen("\"failCount\":") + unsignedLongLength(failed_send_count);
+  len += 1 + strlen("\"resetCause\":") + signedLongLength(last_reset_cause);
+
+  return len;
+}
+
+void writeHealthTelemetry(EthernetClient &out)
+{
+  out.print("],\"health\":{");
+  out.print("\"uptimeSec\":");
+  out.print(millis() / 1000UL);
+  out.print(",\"freeRam\":");
+  out.print(freeMemory());
+  out.print(",\"loopCounter\":");
+  out.print(loop_counter_until_next_measurement);
+  out.print(",\"httpStatus\":");
+  out.print(last_http_status);
+  out.print(",\"sendFailures\":");
+  out.print(consecutive_send_failures);
+  out.print(",\"okCount\":");
+  out.print(successful_send_count);
+  out.print(",\"failCount\":");
+  out.print(failed_send_count);
+  out.print(",\"resetCause\":");
+  out.print(last_reset_cause);
+  out.print("}}");
 }
 
 int jsonPayloadLength()
@@ -123,6 +180,8 @@ int jsonPayloadLength()
     len += strlen(tempBuf);
   }
 
+  len += healthTelemetryLength();
+
   return len;
 }
 
@@ -144,6 +203,9 @@ int freeMemory() {
 
 void setup() 
 { 
+  last_reset_cause = MCUSR;
+  MCUSR = 0;
+
   // wait a second for arduino to startup
   delay(ONE_SECOND);
   
@@ -379,6 +441,11 @@ void sendToServer()
 
  if (client.connect(TARGET_SERVER, TARGET_PORT)) 
  {
+  int responseStatus = -2;
+  bool statusLineDone = false;
+  char statusLine[40];
+  byte statusLineIdx = 0;
+
   client.print("POST ");
   client.print(TARGET_ENDPOINT);
   client.print(" HTTP/1.1\r\n");
@@ -406,7 +473,8 @@ void sendToServer()
     client.print(measurement_values[s]);
     client.print("}");
   }
-  client.println("]}");   
+  writeHealthTelemetry(client);
+  client.println();
   Serial.println("sent done");
 
   unsigned long waitStart = millis();
@@ -418,6 +486,28 @@ void sendToServer()
     {
       char c = client.read();
       Serial.print(c);
+
+      if (!statusLineDone)
+      {
+        if (c == '\r')
+        {
+          // ignore
+        }
+        else if (c == '\n')
+        {
+          statusLine[statusLineIdx] = '\0';
+          if (strncmp(statusLine, "HTTP/1.", 7) == 0)
+          {
+            responseStatus = atoi(statusLine + 9);
+          }
+          statusLineDone = true;
+        }
+        else if (statusLineIdx < sizeof(statusLine) - 1)
+        {
+          statusLine[statusLineIdx++] = c;
+        }
+      }
+
       waitStart = millis();
     }
 
@@ -430,9 +520,24 @@ void sendToServer()
   }
 
   client.stop();
+
+  last_http_status = responseStatus;
+  if (responseStatus >= 200 && responseStatus < 300)
+  {
+    successful_send_count++;
+    consecutive_send_failures = 0;
+  }
+  else
+  {
+    failed_send_count++;
+    consecutive_send_failures++;
+  }
  }
  else
  {
+  last_http_status = -3;
+  failed_send_count++;
+  consecutive_send_failures++;
   Serial.println("connection to server failed");
  }
 }
