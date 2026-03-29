@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <avr/wdt.h>
 
 // MetaData
 const char VERSION[5] = "1.6";
@@ -68,6 +69,7 @@ typedef struct
 // Generic Parameters
 // ************************
 const int       ONE_SECOND = 1000;
+const int       SERVER_RESPONSE_TIMEOUT_MS = 5000;
 const byte      NO_SENSOR_CONNECTED[8] = {0,0,0,0,0,0,0,0};
 // how often to measure and send the temperature data  // recommend: 120
 const int       NUMBER_OF_LOOPS_UNTIL_NEXT_MEASUREMENT = 120; 
@@ -93,6 +95,36 @@ char           tempAddr[40];
 EthernetClient client;
 // state of the connection last time through the main loop
 boolean        lastConnected = false;
+
+
+char toHexChar(byte v)
+{
+  return (v < 10) ? ('0' + v) : ('A' + (v - 10));
+}
+
+int jsonPayloadLength()
+{
+  int len = 17 + 2; // {"measurements":[ + ]}
+
+  for (int s = 0; s < number_of_connected_sensors; s++)
+  {
+    if (s != 0)
+    {
+      len += 1; // comma between measurement objects
+    }
+
+    char addrBuf[40];
+    char tempBuf[12];
+    sensorAddressToString(addrBuf, connected_sensor_ids[s].address);
+    itoa(measurement_values[s], tempBuf, 10);
+
+    len += 31; // {"sensorAddress":" + ","temperature": + }
+    len += strlen(addrBuf);
+    len += strlen(tempBuf);
+  }
+
+  return len;
+}
 
 
 
@@ -134,6 +166,9 @@ void setup()
   printConnectedSensors();
   
   loop_counter_until_next_measurement = NUMBER_OF_LOOPS_UNTIL_NEXT_MEASUREMENT;
+
+  // Restart the MCU automatically if main loop gets stuck.
+  wdt_enable(WDTO_8S);
   
   Serial.println();
   Serial.println("Setup done, starting temperature measurement and transmitting");
@@ -141,6 +176,15 @@ void setup()
 
 void loop() 
 {
+  wdt_reset();
+
+  int dhcpStatus = Ethernet.maintain();
+  if (dhcpStatus == 1 || dhcpStatus == 3)
+  {
+    Serial.println("DHCP lease refresh failed, reinitializing network...");
+    initializeNetworkConnection();
+  }
+
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only: 
@@ -182,6 +226,7 @@ void loop()
     digitalWrite(PIN_LED_LOOP_TOGGLE, HIGH);
   }
   delay(ONE_SECOND);
+  wdt_reset();
   
   loop_counter_until_next_measurement++;
 }
@@ -215,7 +260,7 @@ void searchConnectedSensors()
   searchConnectedSensorsOnBus(oneWireBus2, 2);
 }
 
-void searchConnectedSensorsOnBus(OneWire oneWireBus, int busNo)
+void searchConnectedSensorsOnBus(OneWire &oneWireBus, int busNo)
 {
   byte current_addr[8];
   while(oneWireBus.search(current_addr)) 
@@ -228,6 +273,12 @@ void searchConnectedSensorsOnBus(OneWire oneWireBus, int busNo)
     }
     else
     {
+      if (number_of_connected_sensors >= MAX_SENSORS)
+      {
+        Serial.println("Too many sensors found. Ignoring additional devices.");
+        break;
+      }
+
       // add this device to list
       connected_sensor_ids[number_of_connected_sensors].bus_no = busNo;
       for ( int k=0; k<8; k++)
@@ -264,28 +315,20 @@ void printConnectedSensors()
  */
 char* sensorAddressToString(char* outstr, byte* address)
 {
-  //String asString="";
-  outstr[0]='\0';
+  byte pos = 0;
   for( byte i = 0; i < 8; i++) 
   {
-    strcat(outstr, "0x\0");
-    if (address[i] < 16) 
+    outstr[pos++] = '0';
+    outstr[pos++] = 'x';
+    outstr[pos++] = toHexChar((address[i] >> 4) & 0x0F);
+    outstr[pos++] = toHexChar(address[i] & 0x0F);
+
+    if (i < 7)
     {
-        strcat(outstr, "0\0");
-    }
-    String tmp = String(address[i], HEX);
-    tmp.toUpperCase();
-    char charBuf[4];
-    tmp.toCharArray(charBuf, 4);
-    
-    strcat(outstr, charBuf );
-    strcat(outstr, "\0");
-     
-    if (i < 7) 
-    {
-      strcat(outstr, ",\0");
+      outstr[pos++] = ',';
     }
   }
+  outstr[pos] = '\0';
   return outstr;
 }
 
@@ -301,6 +344,8 @@ void measureTemperature()
 
   for( byte s = 0; s < number_of_connected_sensors; s++) 
   {
+    wdt_reset();
+
     char * sensorAddr = sensorAddressToString(tempAddr, connected_sensor_ids[s].address);
     Serial.print("Measure. Sensor #");
     Serial.print(s+1);
@@ -327,6 +372,11 @@ void measureTemperature()
 
 void sendToServer()
 {
+ if (client.connected())
+ {
+  client.stop();
+ }
+
  if (client.connect(TARGET_SERVER, TARGET_PORT)) 
  {
   client.print("POST ");
@@ -339,20 +389,9 @@ void sendToServer()
   client.print(BASE64_AUTH_STRING);
   client.print("\r\n");
   client.print("Content-Type: application/json\r\n");
-  //client.print("Connection: close\r\n");   
+  client.print("Connection: close\r\n");
   client.print("Content-Length: ");
-  if ( number_of_connected_sensors == 0 )
-  {
-    client.print(17+2);
-  }
-  else if ( number_of_connected_sensors == 1)
-  {
-    client.print(17+78+2);
-  }
-  else
-  {
-    client.print(17+78+ ((number_of_connected_sensors-1)*79) +2);
-  }
+  client.print(jsonPayloadLength());
   client.print("\r\n");
   
   client.print("\r\n");
@@ -369,6 +408,32 @@ void sendToServer()
   }
   client.println("]}");   
   Serial.println("sent done");
+
+  unsigned long waitStart = millis();
+  while ((millis() - waitStart) < SERVER_RESPONSE_TIMEOUT_MS)
+  {
+    wdt_reset();
+
+    while (client.available())
+    {
+      char c = client.read();
+      Serial.print(c);
+      waitStart = millis();
+    }
+
+    if (!client.connected())
+    {
+      break;
+    }
+
+    delay(10);
+  }
+
+  client.stop();
+ }
+ else
+ {
+  Serial.println("connection to server failed");
  }
 }
 
