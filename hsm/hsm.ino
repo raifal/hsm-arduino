@@ -24,27 +24,18 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <stdlib.h>
-#include <SPI.h>
+//#include <SPI.h>
 #include <Ethernet.h>
 #include <avr/wdt.h>
-
-// MetaData
-const char VERSION[5] = "1.6";
-const char CREATED[12] = "26/MAR/2026";
 
 // ************************
 // Individual Parameters
 // ************************
       byte      MAC_OF_ARDUINO_BOARD[] = { 0x90, 0xA2, 0xDA, 0x0E, 0xC8, 0x42 }; 
 const IPAddress ARDUINO_CLIENT_IP (192,168,0,177);
-
 const char      TARGET_SERVER[] = "192.168.0.46";
-const int       TARGET_PORT = 8001;
-const char      TARGET_ENDPOINT[] = "/api/measurements/batch";
 
-// TODO add base64 encoded string from Keepass "HZS php (called by Arduino)"
-// generate with: bash: echo -n "$username:$password" | base64
-const char      BASE64_AUTH_STRING[] = "here base64";
+
 
 // ************************
 // Board Setup (Pin#)
@@ -55,7 +46,7 @@ const char      BASE64_AUTH_STRING[] = "here base64";
 #define PIN_LED_LOOP_TOGGLE 5
 
 // sum of both 1-WireBuses
-#define MAX_SENSORS         14 
+#define MAX_SENSORS         13
 
 typedef struct 
 {
@@ -137,28 +128,6 @@ int healthTelemetryLength()
   return len;
 }
 
-void writeHealthTelemetry(EthernetClient &out)
-{
-  out.print("],\"health\":{");
-  out.print("\"uptimeSec\":");
-  out.print(millis() / 1000UL);
-  out.print(",\"freeRam\":");
-  out.print(freeMemory());
-  out.print(",\"loopCounter\":");
-  out.print(loop_counter_until_next_measurement);
-  out.print(",\"httpStatus\":");
-  out.print(last_http_status);
-  out.print(",\"sendFailures\":");
-  out.print(consecutive_send_failures);
-  out.print(",\"okCount\":");
-  out.print(successful_send_count);
-  out.print(",\"failCount\":");
-  out.print(failed_send_count);
-  out.print(",\"resetCause\":");
-  out.print(last_reset_cause);
-  out.print("}}");
-}
-
 int jsonPayloadLength()
 {
   int len = 17 + 2; // {"measurements":[ + ]}
@@ -175,13 +144,19 @@ int jsonPayloadLength()
     sensorAddressToString(addrBuf, connected_sensor_ids[s].address);
     itoa(measurement_values[s], tempBuf, 10);
 
-    len += 31; // {"sensorAddress":" + ","temperature": + }
+//Serial.print("tempBuf: ");
+//Serial.println(strlen(tempBuf));
+//Serial.print("addrBuf: ");
+//Serial.println(strlen(addrBuf));
+
+    len += 35; // {"sensorAddress":" + ","temperature": + }
     len += strlen(addrBuf);
     len += strlen(tempBuf);
   }
 
-  len += healthTelemetryLength();
-
+//  len += healthTelemetryLength();
+//Serial.print("Len: ");
+//Serial.println(len);
   return len;
 }
 
@@ -210,7 +185,7 @@ void setup()
   delay(ONE_SECOND);
   
   Serial.begin(9600);
-  printInfoHeader();
+  Serial.println("HSM - System restart done");
   
   pinMode(PIN_LED_LOOP_TOGGLE, OUTPUT);
   
@@ -409,7 +384,7 @@ void measureTemperature()
     wdt_reset();
 
     char * sensorAddr = sensorAddressToString(tempAddr, connected_sensor_ids[s].address);
-    Serial.print("Measure. Sensor #");
+    Serial.print("Sensor #");
     Serial.print(s+1);
     Serial.print(": ");
     Serial.print( sensorAddr);
@@ -425,8 +400,7 @@ void measureTemperature()
     }
     
     Serial.print(" -> ");
-    Serial.print(temp_of_sensor);
-    Serial.println(" Grad Celcius");
+    Serial.println(temp_of_sensor);
     
     measurement_values[s] = temp_of_sensor * 100;    
   } 
@@ -439,7 +413,7 @@ void sendToServer()
   client.stop();
  }
 
- if (client.connect(TARGET_SERVER, TARGET_PORT)) 
+ if (client.connect(TARGET_SERVER, 8001)) 
  {
   int responseStatus = -2;
   bool statusLineDone = false;
@@ -447,14 +421,12 @@ void sendToServer()
   byte statusLineIdx = 0;
 
   client.print("POST ");
-  client.print(TARGET_ENDPOINT);
+  client.print("/api/measurements/batch");
   client.print(" HTTP/1.1\r\n");
   client.print("Host: ");
   client.print(TARGET_SERVER);
   client.print("\r\n");
-  client.print("Authorization: Basic ");
-  client.print(BASE64_AUTH_STRING);
-  client.print("\r\n");
+  client.print("Authorization: Basic aHNtOmd6aDdyJWRzdmplX2FwaQ==\r\n");
   client.print("Content-Type: application/json\r\n");
   client.print("Connection: close\r\n");
   client.print("Content-Length: ");
@@ -473,8 +445,8 @@ void sendToServer()
     client.print(measurement_values[s]);
     client.print("}");
   }
-  writeHealthTelemetry(client);
-  client.println();
+  client.print("]}");
+  //client.println();
   Serial.println("sent done");
 
   unsigned long waitStart = millis();
@@ -540,21 +512,4 @@ void sendToServer()
   consecutive_send_failures++;
   Serial.println("connection to server failed");
  }
-}
-
-void printInfoHeader()
-{
-  Serial.println();
-  Serial.println("HSM - Heating System Monitoring");
-  Serial.println("(for Arduino Uno with DS18B20 temperature sensors)");
-  Serial.println();
-  Serial.print("  Version: " );
-  Serial.println(VERSION);
-  Serial.print("  Created: " );
-  Serial.println(CREATED);
-  Serial.print("  Author: " );
-  Serial.println("Rainer Faller (www.rainer-faller.de)");
-  Serial.println();
-  Serial.println("System restart done");
-  Serial.println(); 
 }
