@@ -24,7 +24,6 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <stdlib.h>
-//#include <SPI.h>
 #include <Ethernet.h>
 #include <avr/wdt.h>
 
@@ -34,8 +33,6 @@
       byte      MAC_OF_ARDUINO_BOARD[] = { 0x90, 0xA2, 0xDA, 0x0E, 0xC8, 0x42 }; 
 const IPAddress ARDUINO_CLIENT_IP (192,168,0,177);
 const char      TARGET_SERVER[] = "192.168.0.46";
-
-
 
 // ************************
 // Board Setup (Pin#)
@@ -55,16 +52,13 @@ typedef struct
 } SENSOR_ADDRESS;
 
 
-
 // ************************
 // Generic Parameters
 // ************************
 const int       ONE_SECOND = 1000;
 const int       SERVER_RESPONSE_TIMEOUT_MS = 5000;
 const byte      NO_SENSOR_CONNECTED[8] = {0,0,0,0,0,0,0,0};
-// how often to measure and send the temperature data  // recommend: 120
 const int       NUMBER_OF_LOOPS_UNTIL_NEXT_MEASUREMENT = 120; 
-
 
 // ************************
 // Singletons
@@ -98,36 +92,6 @@ char toHexChar(byte v)
   return (v < 10) ? ('0' + v) : ('A' + (v - 10));
 }
 
-int signedLongLength(long value)
-{
-  char buf[16];
-  ltoa(value, buf, 10);
-  return strlen(buf);
-}
-
-int unsignedLongLength(unsigned long value)
-{
-  char buf[16];
-  ultoa(value, buf, 10);
-  return strlen(buf);
-}
-
-int healthTelemetryLength()
-{
-  int len = strlen("],\"health\":{") + 2; // suffix + closing }}
-
-  len += strlen("\"uptimeSec\":") + unsignedLongLength(millis() / 1000UL);
-  len += 1 + strlen("\"freeRam\":") + signedLongLength(freeMemory());
-  len += 1 + strlen("\"loopCounter\":") + signedLongLength(loop_counter_until_next_measurement);
-  len += 1 + strlen("\"httpStatus\":") + signedLongLength(last_http_status);
-  len += 1 + strlen("\"sendFailures\":") + signedLongLength(consecutive_send_failures);
-  len += 1 + strlen("\"okCount\":") + unsignedLongLength(successful_send_count);
-  len += 1 + strlen("\"failCount\":") + unsignedLongLength(failed_send_count);
-  len += 1 + strlen("\"resetCause\":") + signedLongLength(last_reset_cause);
-
-  return len;
-}
-
 int jsonPayloadLength()
 {
   int len = 17 + 2; // {"measurements":[ + ]}
@@ -143,20 +107,10 @@ int jsonPayloadLength()
     char tempBuf[12];
     sensorAddressToString(addrBuf, connected_sensor_ids[s].address);
     itoa(measurement_values[s], tempBuf, 10);
-
-//Serial.print("tempBuf: ");
-//Serial.println(strlen(tempBuf));
-//Serial.print("addrBuf: ");
-//Serial.println(strlen(addrBuf));
-
     len += 35; // {"sensorAddress":" + ","temperature": + }
     len += strlen(addrBuf);
     len += strlen(tempBuf);
   }
-
-//  len += healthTelemetryLength();
-//Serial.print("Len: ");
-//Serial.println(len);
   return len;
 }
 
@@ -173,8 +127,6 @@ int freeMemory() {
   }
   return free_memory;
 }
-
-
 
 void setup() 
 { 
@@ -249,11 +201,9 @@ void loop()
      loop_counter_until_next_measurement = 0;
   }  
 
-  // store the state of the connection for next time through
-  // the loop:
+  // store the state of the connection for next time through the loop:
   lastConnected = client.connected();
 
- // Serial.println("Blink");
   if ( digitalRead(PIN_LED_LOOP_TOGGLE) == HIGH ) 
   {
     digitalWrite(PIN_LED_LOOP_TOGGLE, LOW);  
@@ -446,8 +396,7 @@ void sendToServer()
     client.print("}");
   }
   client.print("]}");
-  //client.println();
-  Serial.println("sent done");
+  Serial.println("done.");
 
   unsigned long waitStart = millis();
   while ((millis() - waitStart) < SERVER_RESPONSE_TIMEOUT_MS)
