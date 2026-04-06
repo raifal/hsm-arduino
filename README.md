@@ -43,7 +43,7 @@ A number of parts are required in order to setup the arduino. Please find below 
 	</tr>
 	<tr>
 		<td>1</td>
-		<td>Arduino Ethernet Shield Rev3 WITHOUT PoE Module</td>
+		<td>Arduino Ethernet Shield Rev3</td>
 		<td><a href="http://store.arduino.cc/index.php?main_page=product_info&cPath=37_5&products_id=199">Arduino.cc</a></td>
 		<td>EUR 34,51</td>
 	</tr>	
@@ -75,17 +75,11 @@ A number of parts are required in order to setup the arduino. Please find below 
 		<td>1</td>
 		<td>Male Header Pins (Height: 19.8mm)</td>		
 		<td><a href="http://www.conrad.de/ce/de/product/741133/Stiftleiste-RM-254-gerade-Pole-1-x-36-10120510-BKL-Electronic-Inhalt-1-St">Conrad</a></td>
-		<td>EUR 0,97</td>
-	</tr>
-	<tr>
-		<td>3</td>
-		<td>220 Ohm Resistor</td>		
-		<td>&nbsp;</td>
 		<td>few cents</td>
 	</tr>
 	<tr>
 		<td>1</td>
-		<td>10 kOhm Resistor</td>		
+		<td>220 Ohm Resistor</td>		
 		<td>&nbsp;</td>
 		<td>few cents</td>
 	</tr>
@@ -97,19 +91,13 @@ A number of parts are required in order to setup the arduino. Please find below 
 	</tr>	
 	<tr>
 		<td>1</td>
-		<td>Push Button</td>		
-		<td>&nbsp;</td>
-		<td>few cents</td>
-	</tr>
-	<tr>
-		<td>3</td>
-		<td>LEDs, different colors</td>		
+		<td>LEDs, any color</td>		
 		<td>&nbsp;</td>
 		<td>few cents</td>
 	</tr>	
 	<tr>
 		<td colspan="3" align="right">Total without shipping</td>
-		<td>EUR 104,35</td>
+		<td>ca. EUR 100,00</td>
 	</tr>		
 </table>
 
@@ -119,7 +107,7 @@ As the arduino uno does not have a possibility to connect to the internet, an et
 
 ![circuit1](./docs/circuit1.png)
 
-![circuit2](./docs/circuit2.png)
+![circuit2](./docs/circuit2.PNG)
 
 The temperature sensors are connected using the 1-Wire bus protocol. There are actually two busses installed. The reason is that some temperature sensors required a long cable (up to 10 meters). It seems like the power of the arduino is limited and only a sum of temperature sensors cable length of about 25 meters is possible to be connected to the bus. Therefore the board supports two busses in order to handle longer cable length. 
 
