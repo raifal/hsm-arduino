@@ -106,6 +106,7 @@ A number of parts are required in order to setup the arduino. Please find below 
 As the arduino uno does not have a possibility to connect to the internet, an ethernet shield is required. The ethernet shield is not shown in the next diagram.
 
 ![circuit1](./docs/circuit1.png)
+Source: https://www.tinkercad.com/things/04ZoCznP0GR/editel
 
 ![circuit2](./docs/circuit2.PNG)
 
