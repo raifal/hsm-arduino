@@ -109,5 +109,7 @@ As the arduino uno does not have a possibility to connect to the internet, an et
 
 ![circuit2](./docs/circuit2.PNG)
 
+![circuit3](./docs/circuit3.PNG)
+
 The temperature sensors are connected using the 1-Wire bus protocol. There are actually two busses installed. The reason is that some temperature sensors required a long cable (up to 10 meters). It seems like the power of the arduino is limited and only a sum of temperature sensors cable length of about 25 meters is possible to be connected to the bus. Therefore the board supports two busses in order to handle longer cable length. 
 
