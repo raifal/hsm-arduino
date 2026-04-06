@@ -26,8 +26,7 @@ Update V 1.6:
 # Technical Solution
 
 ## Arduino Parts
-A number of parts are required in order to setup the arduino. Please find below a list of components with a link of a possible shop. 
-
+A number of parts are required in order to setup the arduino.
 <table>
 	<tr>
 		<th>Quantity</th>
