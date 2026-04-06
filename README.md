@@ -32,72 +32,46 @@ A number of parts are required in order to setup the arduino. Please find below 
 	<tr>
 		<th>Quantity</th>
 		<th>Product</th>
-		<th>Possible Shop URL</th>
-		<th>Price</th>
 	</tr>
 	<tr>
 		<td>1</td>
 		<td>Arduino UNO Rev3</td>
-		<td><a href="http://store.arduino.cc/index.php?main_page=product_info&cPath=11&products_id=195">Arduino.cc</a></td>
-		<td>EUR 23,80</td>
 	</tr>
 	<tr>
 		<td>1</td>
 		<td>Arduino Ethernet Shield Rev3</td>
-		<td><a href="http://store.arduino.cc/index.php?main_page=product_info&cPath=37_5&products_id=199">Arduino.cc</a></td>
-		<td>EUR 34,51</td>
 	</tr>	
 	<tr>
 		<td>10</td>
 		<td>1m Waterproof Digital Thermal Temperature Temp Sensor Probe DS18B20 Connector</td>
-		<td><a href="http://r.ebay.com/oJ5Xta">sureelectronics (Ebay)</a></td>
-		<td>EUR 13,72</td>
 	</tr>
 	<tr>
 		<td>5</td>
 		<td>5m Waterproof Digital Thermal Temperature Temp Sensor Probe DS18B20 Connector</td>
-		<td><a href="http://r.ebay.com/ZWwbxL">sureelectronics (Ebay)</a></td>
-		<td>EUR 18,69</td>
 	</tr>
 	<tr>
 		<td>1</td>
 		<td>Breadboard</td>		
-		<td><a href="http://www.amazon.de/dp/B009P04XG8">Amazon Shop</a></td>
-		<td>EUR 2,67</td>
 	</tr>
 	<tr>
 		<td>1</td>
 		<td>9V Netzteil</td>
-		<td><a href="http://www.amazon.de/dp/B008QXOMQQ">Amazon Shop</a></td>
-		<td>EUR 9,99</td>
 	</tr>
 	<tr>
 		<td>1</td>
 		<td>Male Header Pins (Height: 19.8mm)</td>		
-		<td><a href="http://www.conrad.de/ce/de/product/741133/Stiftleiste-RM-254-gerade-Pole-1-x-36-10120510-BKL-Electronic-Inhalt-1-St">Conrad</a></td>
-		<td>few cents</td>
 	</tr>
 	<tr>
 		<td>1</td>
 		<td>220 Ohm Resistor</td>		
-		<td>&nbsp;</td>
-		<td>few cents</td>
 	</tr>
 	<tr>
 		<td>2</td>
 		<td>4.7 kOhm Resistor</td>		
-		<td>&nbsp;</td>
-		<td>few cents</td>
 	</tr>	
 	<tr>
 		<td>1</td>
 		<td>LEDs, any color</td>		
-		<td>&nbsp;</td>
-		<td>few cents</td>
-	</tr>	
-	<tr>
-		<td colspan="3" align="right">Total without shipping</td>
-		<td>ca. EUR 100,00</td>
 	</tr>		
 </table>
 
